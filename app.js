@@ -1,15 +1,7 @@
 const { profile } = require('console');
 const inquirer = require('inquirer');
-// const fs = require('fs');
-// const generatePage = require('./src/page-template');
-
-// const pageHTML = generatePage(name,github);
-
-// fs.writeFile('./index.html', pageHTML, err => {
-//     if (err) throw err;
-
-//     console.log('Portfolio complete! Check out index.html to see the output!');
-// });
+const fs = require('fs');
+const generatePage = require('./src/page-template');
 
 const promptUser = () => {
     return inquirer.prompt([
@@ -30,8 +22,8 @@ const promptUser = () => {
         type: 'input',
         name: 'github',
         message: 'Enter your GitHub Username (Required)',
-        validate: nameInput => {
-            if (nameInput) {
+        validate: githubInput => {
+            if (githubInput) {
                 return true;
             } else {
                 console.log("Please enter your github username!");
@@ -49,13 +41,7 @@ const promptUser = () => {
         type: 'input',
         name: 'about',
         message: 'Provide some information about yourself:',
-        when: ({ confirmAbout }) => {
-            if (confirmAbout) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        when: ({ confirmAbout }) => confirmAbout
       }
     ]);
   };
@@ -88,10 +74,10 @@ Add a New Project
         },
         {
             type: 'input',
-            name: 'github',
+            name: 'description',
             message: 'Provide a description of the project (Required)',
-            validate: nameInput => {
-                if (nameInput) {
+            validate: descriptionInput => {
+                if (descriptionInput) {
                     return true;
                 } else {
                     console.log("Please enter description!");
@@ -109,8 +95,8 @@ Add a New Project
             type: 'input',
             name: 'link',
             message: 'Enter the Github link to your project. (Required)',
-            validate: nameInput => {
-                if (nameInput) {
+            validate: linkInput => {
+                if (linkInput) {
                     return true;
                 } else {
                     console.log("Please enter your Github link!");
@@ -121,7 +107,7 @@ Add a New Project
         {
             type: 'confirm',
             name: 'feature',
-            message: 'Would you like to feature thids project?',
+            message: 'Would you like to feature this project?',
             default: false 
         },
         {
@@ -144,6 +130,12 @@ Add a New Project
 promptUser()
     .then(promptProject)
     .then(portfolioData => {
-        console.log(portfolioData);
+        const pageHTML = generatePage(portfolioData);
+
+        fs.writeFile('./index.html', pageHTML, err => {
+            if (err) throw err;
+
+            console.log('Portfolio complete! Check out index.html to see the output!');
+        });
     });
 
